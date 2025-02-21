@@ -24,6 +24,7 @@ export default function Ballot() {
                 width={1265}
                 height={259}
                 alt="Logo AIESEC (Azul)"
+                priority={true}
                 />
 
             <p className='uppercase font-bold'>Boleta de Votación</p>
