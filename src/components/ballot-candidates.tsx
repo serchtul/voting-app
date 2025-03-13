@@ -1,31 +1,67 @@
-import type { JSX } from "react";
 import BallotEntry from "./ballot-entry";
+import { VOTE_AGAINST, VOTE_FOR, type Ballot, type Candidate } from "@/store/ballot";
 
 type BallotCandidatesProps = {
-  candidates: string[]
+  handleVote: (candidateId: string) => (vote?: string) => void;
+  ballot: Ballot;
+  candidates: Candidate[];
 }
 
-const entryWrapper = (children: JSX.Element[]) =>
-  <div className="my-4 flex flex-col gap-3 justify-center">
-    {children}
-  </div>
-
-export default function BallotCandidates({ candidates }: BallotCandidatesProps) {
+export default function BallotCandidates({ ballot, candidates, handleVote }: BallotCandidatesProps) {
   if (candidates.length === 0) {
     throw new Error("No candidates were provided!");
   }
 
+  const wrapperStyles = "my-4 flex flex-col gap-3 justify-center";
+
   if (candidates.length === 1) {
+    const candidate = candidates[0];
+    const vote = ballot[candidate.id];
+    const handler = (value: string) => () => {
+      handleVote(candidate.id)(vote.value !== value ? value : undefined)
+    }
+
     return <>
-      <p>{candidates[0]}</p>
-      {entryWrapper([
-        <BallotEntry key="for" type="single" entry="A favor" vote={false} />,
-        <BallotEntry key="against" type="single" entry="En contra" vote={false} />
-      ])}
+      <p className="mt-4">{candidate.name}</p>
+      <div className={wrapperStyles}>
+        <BallotEntry
+          type="single"
+          entry="A favor"
+          value={vote.value === VOTE_FOR ? 'X' : undefined}
+          handleVote={handler(VOTE_FOR)}
+        />
+        <BallotEntry
+          type="single"
+          entry="En contra"
+          value={vote.value === VOTE_AGAINST ? 'X' : undefined}
+          handleVote={handler(VOTE_AGAINST)}
+        />
+      </div>
     </>
   }
 
-  return entryWrapper(candidates.map((candidate) =>
-    <BallotEntry key={candidate} type="multi" entry={candidate} />
-  ));
+  const abstentions = Object.values(ballot).filter(({ value }) => value === 'A').length;
+  const options = Array.from(
+    { length: candidates.length - abstentions },
+    (_, i) => String(i + 1)
+  );
+  const abstentionOptions = options.concat(String(options.length + 1))
+  options.push("A");
+  abstentionOptions.push("A");
+
+
+  return <div className={wrapperStyles}>
+    {
+      candidates.map(({ name, id }) =>
+        <BallotEntry
+          key={id}
+          type="multi"
+          entry={name}
+          value={ballot[id].value}
+          handleVote={handleVote(id)}
+          options={ballot[id].value === 'A' ? abstentionOptions : options}
+        />
+      )
+    }
+  </div>
 }
