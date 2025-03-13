@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${lato.variable} pt-4 px-10`}>
+      <body className={`${lato.variable} mt-4 mx-10`}>
         {children}
       </body>
     </html>
