@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 import type { WritableDraft } from 'immer';
 
-const ABSTENTION = 'A';
+export const ABSTENTION = 'A';
 export const VOTE_FOR = 'Y';
 export const VOTE_AGAINST = 'N';
 

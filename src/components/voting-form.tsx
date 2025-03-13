@@ -1,11 +1,10 @@
 "use client";
 import Ballot from "./ballot";
-import { Button } from "./ui/button";
-import { Vote } from "lucide-react"
 import { useEffect, useRef } from "react";
 import { BallotContext } from "@/store/context";
 import { createBallotStore, type Entity, type Election } from "@/store/ballot";
 import { useStore } from "zustand";
+import VotingButton from "./voting-button";
 
 type VotingFormProps = {
   election: Election;
@@ -32,9 +31,7 @@ export default function VotingForm(props: VotingFormProps) {
         }
     </div>
     <div className="flex justify-center">
-      <Button disabled size="lg">
-        <Vote />Votar
-      </Button>
+      <VotingButton />
     </div>
   </BallotContext.Provider>
 }
