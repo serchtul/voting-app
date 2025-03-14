@@ -5,9 +5,13 @@ type BallotCandidatesProps = {
   handleVote: (candidateId: string) => (vote?: string) => void;
   ballot: Ballot;
   candidates: Candidate[];
-}
+};
 
-export default function BallotCandidates({ ballot, candidates, handleVote }: BallotCandidatesProps) {
+export default function BallotCandidates({
+  ballot,
+  candidates,
+  handleVote,
+}: BallotCandidatesProps) {
   if (candidates.length === 0) {
     throw new Error("No candidates were provided!");
   }
@@ -18,50 +22,48 @@ export default function BallotCandidates({ ballot, candidates, handleVote }: Bal
     const candidate = candidates[0];
     const vote = ballot[candidate.id];
     const handler = (value: string) => () => {
-      handleVote(candidate.id)(vote.value !== value ? value : undefined)
-    }
+      handleVote(candidate.id)(vote.value !== value ? value : undefined);
+    };
 
-    return <>
-      <p className="mt-4">{candidate.name}</p>
-      <div className={wrapperStyles}>
-        <BallotEntry
-          type="single"
-          entry="A favor"
-          value={vote.value === VOTE_FOR ? 'X' : undefined}
-          handleVote={handler(VOTE_FOR)}
-        />
-        <BallotEntry
-          type="single"
-          entry="En contra"
-          value={vote.value === VOTE_AGAINST ? 'X' : undefined}
-          handleVote={handler(VOTE_AGAINST)}
-        />
-      </div>
-    </>
+    return (
+      <>
+        <p className="mt-4">{candidate.name}</p>
+        <div className={wrapperStyles}>
+          <BallotEntry
+            type="single"
+            entry="A favor"
+            value={vote.value === VOTE_FOR ? "X" : undefined}
+            handleVote={handler(VOTE_FOR)}
+          />
+          <BallotEntry
+            type="single"
+            entry="En contra"
+            value={vote.value === VOTE_AGAINST ? "X" : undefined}
+            handleVote={handler(VOTE_AGAINST)}
+          />
+        </div>
+      </>
+    );
   }
 
-  const abstentions = Object.values(ballot).filter(({ value }) => value === 'A').length;
-  const options = Array.from(
-    { length: candidates.length - abstentions },
-    (_, i) => String(i + 1)
-  );
-  const abstentionOptions = options.concat(String(options.length + 1))
+  const abstentions = Object.values(ballot).filter(({ value }) => value === "A").length;
+  const options = Array.from({ length: candidates.length - abstentions }, (_, i) => String(i + 1));
+  const abstentionOptions = options.concat(String(options.length + 1));
   options.push("A");
   abstentionOptions.push("A");
 
-
-  return <div className={wrapperStyles}>
-    {
-      candidates.map(({ name, id }) =>
+  return (
+    <div className={wrapperStyles}>
+      {candidates.map(({ name, id }) => (
         <BallotEntry
           key={id}
           type="multi"
           entry={name}
           value={ballot[id].value}
           handleVote={handleVote(id)}
-          options={ballot[id].value === 'A' ? abstentionOptions : options}
+          options={ballot[id].value === "A" ? abstentionOptions : options}
         />
-      )
-    }
-  </div>
+      ))}
+    </div>
+  );
 }

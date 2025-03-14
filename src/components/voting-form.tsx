@@ -9,29 +9,29 @@ import VotingButton from "./voting-button";
 type VotingFormProps = {
   election: Election;
   entity: Entity;
-}
+};
 
 export default function VotingForm(props: VotingFormProps) {
   const store = useRef(createBallotStore(props)).current;
-  const startVoting = useStore(store, store => store.startVoting);
+  const startVoting = useStore(store, (store) => store.startVoting);
   const votes = props.entity.votes ?? 1;
 
   // A hack, fix to start voting once we report to the API that we're starting
   useEffect(() => {
-    startVoting()
+    startVoting();
   }, [startVoting]);
 
   // TODO: Add voting button logic
-  return <BallotContext.Provider value={store}>
-    <div className="flex justify-center flex-wrap gap-6 mb-4">
-        {
-          Array.from({ length: votes }).map((_,i) =>
-            <Ballot key={`ballot${i+1}`} idx={i} />
-          )
-        }
-    </div>
-    <div className="flex justify-center">
-      <VotingButton />
-    </div>
-  </BallotContext.Provider>
+  return (
+    <BallotContext.Provider value={store}>
+      <div className="flex justify-center flex-wrap gap-6 mb-4">
+        {Array.from({ length: votes }).map((_, i) => (
+          <Ballot key={`ballot${i + 1}`} idx={i} />
+        ))}
+      </div>
+      <div className="flex justify-center">
+        <VotingButton />
+      </div>
+    </BallotContext.Provider>
+  );
 }
