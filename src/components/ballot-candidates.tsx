@@ -1,5 +1,5 @@
 import BallotEntry from "./ballot-entry";
-import { VOTE_AGAINST, VOTE_FOR, type Ballot, type Candidate } from "@/store/ballot";
+import { ABSTENTION, VOTE_AGAINST, VOTE_FOR, type Ballot, type Candidate } from "@/store/ballot";
 
 type BallotCandidatesProps = {
   handleVote: (candidateId: string) => (vote?: string) => void;
@@ -46,11 +46,11 @@ export default function BallotCandidates({
     );
   }
 
-  const abstentions = Object.values(ballot).filter(({ value }) => value === "A").length;
+  const abstentions = Object.values(ballot).filter(({ value }) => value === ABSTENTION).length;
   const options = Array.from({ length: candidates.length - abstentions }, (_, i) => String(i + 1));
   const abstentionOptions = options.concat(String(options.length + 1));
-  options.push("A");
-  abstentionOptions.push("A");
+  options.push(ABSTENTION);
+  abstentionOptions.push(ABSTENTION);
 
   return (
     <div className={wrapperStyles}>
@@ -61,7 +61,7 @@ export default function BallotCandidates({
           entry={name}
           value={ballot[id].value}
           handleVote={handleVote(id)}
-          options={ballot[id].value === "A" ? abstentionOptions : options}
+          options={ballot[id].value === ABSTENTION ? abstentionOptions : options}
         />
       ))}
     </div>
