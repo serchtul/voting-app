@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { dialect } from "./lib/db/dialect";
+import { dialect } from "./db/dialect";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;

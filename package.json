@@ -10,7 +10,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --out-file ./src/db/db.d.ts"
   },
   "dependencies": {
     "@libsql/kysely-libsql": "^0.4.1",
@@ -23,6 +24,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "immer": "^10.1.1",
+    "kysely": "^0.27.6",
     "lucide-react": "^0.479.0",
     "next": "^15.1.7",
     "react": "^19.0.0",
@@ -42,6 +44,7 @@
     "eslint-config-next": "^15.0.4",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "kysely-codegen": "^0.18.3",
     "kysely-ctl": "^0.12.1",
     "postcss": "^8.5.2",
     "prettier": "3.5.3",
