@@ -1,10 +1,5 @@
 import { betterAuth } from "better-auth";
-import { LibsqlDialect } from "@libsql/kysely-libsql";
-
-const dbUrl = process.env.TURSO_DATABASE_URL;
-if (!dbUrl) {
-  throw new Error("Missing TURSO_DATABASE_URL environment variable!");
-}
+import { dialect } from "./lib/db/dialect";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -16,10 +11,7 @@ if (!googleClientId || !googleClientSecret) {
 
 export const auth = betterAuth({
   database: {
-    dialect: new LibsqlDialect({
-      url: dbUrl,
-      authToken: process.env.TURSO_AUTH_TOKEN ?? "",
-    }),
+    dialect,
     type: "sqlite",
   },
   socialProviders: {
