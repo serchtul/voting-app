@@ -38,13 +38,18 @@ export interface Election {
   name: string;
 }
 
+export interface ElectionVoter {
+  electionId: string;
+  entityId: string;
+  votes: Generated<number>;
+  votingStatus: Generated<string>;
+}
+
 export interface Entity {
   code: string;
   id: string;
   name: string;
-  votes: Generated<number>;
   votingEmail: string;
-  votingState: Generated<string>;
 }
 
 export interface Session {
@@ -81,6 +86,7 @@ export interface DB {
   account: Account;
   candidate: Candidate;
   election: Election;
+  electionVoter: ElectionVoter;
   entity: Entity;
   session: Session;
   user: User;

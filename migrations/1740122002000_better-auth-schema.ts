@@ -19,7 +19,8 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  const tables = ["user", "session", "account", "verification"];
+  // Drop tables in the opposite order of creation, to avoid possible issues with foreign key constraints
+  const tables = ["verification", "account", "session", "user"];
 
   for (const table of tables) {
     await db.schema.dropTable(table).execute();
