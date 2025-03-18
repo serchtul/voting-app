@@ -10,7 +10,7 @@ const statusMessages: Record<Status, string> = {
   done: "Votó",
 };
 
-export default function EntityCard({ name, votingState: status, code }: Entity) {
+export default function EntityCard({ name, votingStatus: status, code }: Entity) {
   return (
     <TooltipProvider>
       <Tooltip>

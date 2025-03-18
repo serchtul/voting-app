@@ -1,6 +1,6 @@
 import EntityCard from "@/components/entity-card";
 import { Badge } from "@/components/ui/badge";
-import { eys } from "@/app/api/entities";
+import { eys } from "@/app/api/entity";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,9 +24,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const groupedEys = Object.groupBy(eys, (ey) =>
-  ey.votingState === "offline" ? "offline" : "online",
+  ey.votingStatus === "offline" ? "offline" : "online",
 );
-const voted = eys.filter((ey) => ey.votingState === "done").length;
+const voted = eys.filter((ey) => ey.votingStatus === "done").length;
 
 const quorum = groupedEys.online!.length;
 const progress = (voted / quorum) * 100;
@@ -78,7 +78,7 @@ export default function ElectionTracker() {
                         <p className="mb-2">Las siguientes entidades no han votado:</p>
                         <ul className="list-disc pl-6 my-3">
                           {eys
-                            .filter((ey) => ey.votingState !== "done")
+                            .filter((ey) => ey.votingStatus !== "done")
                             .map((ey) => (
                               <li key={ey.code}>{ey.name}</li>
                             ))}

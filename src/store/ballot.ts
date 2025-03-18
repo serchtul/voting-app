@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { WritableDraft } from "immer";
+import { processVotes, startVoting } from "@/actions";
 
 export const ABSTENTION = "A";
 export const VOTE_FOR = "Y";
@@ -20,7 +20,6 @@ export type Election = {
   id: string;
   date: string; // ISO String
   name: string;
-  votingTimeMin: number;
   candidates: Candidate[];
 };
 
@@ -29,7 +28,7 @@ export type Entity = {
   id: string;
   name: string;
   code: string;
-  votingState: Status;
+  votingStatus: Status;
   votes?: number;
 };
 
@@ -39,9 +38,9 @@ type BallotProps = {
 };
 
 type BallotActions = {
-  startVoting: () => void;
+  startVoting: () => Promise<void>;
   updateBallot: (ballotIdx: number) => (candidateId: string) => (vote?: string) => void;
-  finishVoting: () => void;
+  finishVoting: (votes: Vote[][]) => Promise<void>;
 };
 
 export type BallotState = BallotProps & {
@@ -50,16 +49,22 @@ export type BallotState = BallotProps & {
 
 export const createBallotStore = ({ election, entity }: BallotProps) => {
   return create<BallotState>()(
-    immer((set) => ({
+    immer((set, get) => ({
       election,
       entity,
       ballots: Array.from({ length: entity.votes ?? 1 }, () =>
         Object.fromEntries(election.candidates.map(({ id }) => [id, { candidateId: id } as Vote])),
       ),
-      startVoting: () =>
+      startVoting: async () => {
+        const state = get();
+        if (state.entity.votingStatus === "offline") {
+          await startVoting(state.election.id, state.entity.id);
+        }
+
         set((state) => {
-          state.entity.votingState = "voting";
-        }),
+          state.entity.votingStatus = "voting";
+        });
+      },
       updateBallot: (ballotIdx: number) => (candidateId: string) => (vote?: string) =>
         set((state) => {
           assertVotingStarted(state);
@@ -81,18 +86,22 @@ export const createBallotStore = ({ election, entity }: BallotProps) => {
 
           state.ballots[ballotIdx][candidateId].value = vote;
         }),
-      finishVoting: () =>
+      finishVoting: async (votes: Vote[][]) => {
+        const state = get();
+        assertVotingStarted(state);
+
+        await processVotes(state.election.id, state.entity.id, votes);
+
         set((state) => {
-          assertVotingStarted(state);
-          // TODO: Validations
-          state.entity.votingState = "done";
-        }),
+          state.entity.votingStatus = "done";
+        });
+      },
     })),
   );
 };
 
-function assertVotingStarted(state: WritableDraft<BallotState>) {
-  if (state.entity.votingState !== "voting") {
-    throw new Error("Election has not started");
+function assertVotingStarted(state: BallotState) {
+  if (state.entity.votingStatus !== "voting") {
+    throw new Error("Entity has not started voting or has already voted");
   }
 }
