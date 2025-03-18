@@ -9,18 +9,22 @@ import { Suspense } from "react";
 export default function Login() {
   return (
     <Suspense>
-      <Card className="max-w-md">
-        <CardHeader>
-          <CardTitle className="text-lg md:text-xl text-center">Sign In</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4 m-4">
-            <div className={cn("w-full gap-2 flex items-center", "justify-between flex-col")}>
-              <LoginButton />
+      <div className="min-h-[75svh] flex justify-center items-center">
+        <Card className="w-sm gap-4">
+          <CardHeader>
+            <CardTitle className="text-lg md:text-xl text-center">
+              AIESEC in Mexico Elections
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 mb-6">
+              <div className={cn("w-full gap-2 flex items-center", "justify-between flex-col")}>
+                <LoginButton />
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </Suspense>
   );
 }
