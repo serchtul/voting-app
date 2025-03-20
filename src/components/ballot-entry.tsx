@@ -17,7 +17,7 @@ type BallotEntryProps = {
 
 export default function BallotEntry(props: BallotEntryProps) {
   const flexStyle = "flex gap-2 items-center";
-  const boxStyle = "border-2 w-8 h-8 p-0 text-lg justify-center rounded-none";
+  const boxStyle = "border-2 size-8 p-0 text-lg justify-center rounded-none";
 
   if (props.type === "single") {
     return (
