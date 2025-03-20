@@ -17,7 +17,8 @@ export default function Login() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 mb-6">
+            <div className="grid gap-4 mb-6 text-center">
+              Ingresa con tu correo .org.mx
               <div className={cn("w-full gap-2 flex items-center", "justify-between flex-col")}>
                 <LoginButton />
               </div>
