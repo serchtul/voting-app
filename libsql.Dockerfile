@@ -1,6 +1,4 @@
-# This Dockerfile assumes the platform is arm64 (e.g. Macs w/Apple Silicon).
-# Please modify accordingly if you want to run it on other architectures
-FROM ghcr.io/tursodatabase/libsql-server:latest-arm
+FROM ghcr.io/tursodatabase/libsql-server:latest
 
 RUN mkdir -p /tmp/sqlite/extensions
 
