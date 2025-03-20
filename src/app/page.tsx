@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import VotingForm from "@/components/voting-form";
+import VotingPage from "@/components/voting-page";
 import { db } from "@/db";
 import { plainify } from "@/lib/plain-ify";
 import type { Election, Entity } from "@/store/ballot";
@@ -54,9 +54,10 @@ export default async function Home() {
     candidates,
   };
 
+  // TODO: If election is done, pre-populate ballots with values from the DB (inject into store, with the valid format)
   return (
     <>
-      <VotingForm election={election} entity={entity as Entity} />
+      <VotingPage election={election} entity={entity as Entity} />
     </>
   );
 }

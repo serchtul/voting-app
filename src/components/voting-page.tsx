@@ -5,23 +5,26 @@ import { BallotContext } from "@/store/context";
 import { createBallotStore, type Entity, type Election } from "@/store/ballot";
 import { useStore } from "zustand";
 import VotingButton from "./voting-button";
+import { DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { status } from "@/constants";
 
 type VotingFormProps = {
   election: Election;
   entity: Entity;
 };
 
-export default function VotingForm(props: VotingFormProps) {
+export default function VotingPage(props: VotingFormProps) {
   const store = useRef(createBallotStore(props)).current;
   const startVoting = useStore(store, (store) => store.startVoting);
   const votes = props.entity.votes ?? 1;
+  const hasVoted = useStore(store, (store) => store.entity.votingStatus === status.done);
 
-  // A hack, fix to start voting once we report to the API that we're starting
+  // Only register the voting has started on the FE
   useEffect(() => {
     startVoting();
   }, [startVoting]);
 
-  // TODO: Add voting button logic
   return (
     <BallotContext.Provider value={store}>
       <div className="flex justify-center flex-wrap gap-6 mb-4">
@@ -29,9 +32,19 @@ export default function VotingForm(props: VotingFormProps) {
           <Ballot key={`ballot${i + 1}`} idx={i} />
         ))}
       </div>
-      <div className="flex justify-center">
-        <VotingButton />
-      </div>
+      {!hasVoted && (
+        <div className="flex justify-center">
+          <VotingButton />
+        </div>
+      )}
+      <Dialog open={hasVoted}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Tu voto fue registrado</DialogTitle>
+            <DialogDescription>Agradecemos tu participación en esta elección.</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </BallotContext.Provider>
   );
 }

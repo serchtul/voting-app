@@ -35,6 +35,7 @@ export type Entity = {
 type BallotProps = {
   election: Election;
   entity: Entity;
+  ballots?: Ballot[];
 };
 
 type BallotActions = {
@@ -47,19 +48,25 @@ export type BallotState = BallotProps & {
   ballots: Ballot[];
 } & BallotActions;
 
-export const createBallotStore = ({ election, entity }: BallotProps) => {
+export const createBallotStore = ({ election, entity, ballots }: BallotProps) => {
   return create<BallotState>()(
     immer((set, get) => ({
       election,
       entity,
-      ballots: Array.from({ length: entity.votes ?? 1 }, () =>
-        Object.fromEntries(election.candidates.map(({ id }) => [id, { candidateId: id } as Vote])),
-      ),
+      ballots:
+        ballots ??
+        Array.from({ length: entity.votes ?? 1 }, () =>
+          Object.fromEntries(
+            election.candidates.map(({ id }) => [id, { candidateId: id } as Vote]),
+          ),
+        ),
       startVoting: async () => {
         const state = get();
-        if (state.entity.votingStatus === "offline") {
-          await startVoting(state.election.id, state.entity.id);
+        if (state.entity.votingStatus !== "offline") {
+          return;
         }
+
+        await startVoting(state.election.id, state.entity.id);
 
         set((state) => {
           state.entity.votingStatus = "voting";
