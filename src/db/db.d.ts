@@ -26,6 +26,19 @@ export interface Account {
   userId: string;
 }
 
+export interface Ballot {
+  electionId: string;
+  id: string;
+  salt: string;
+  votingHash: string;
+}
+
+export interface BallotVote {
+  ballotId: string;
+  candidateId: string;
+  vote: string;
+}
+
 export interface Candidate {
   electionId: string;
   id: string;
@@ -63,6 +76,12 @@ export interface Session {
   userId: string;
 }
 
+export interface SqleanDefine {
+  body: string | null;
+  name: string | null;
+  type: string | null;
+}
+
 export interface User {
   createdAt: string;
   email: string;
@@ -84,11 +103,14 @@ export interface Verification {
 
 export interface DB {
   account: Account;
+  ballot: Ballot;
+  ballotVote: BallotVote;
   candidate: Candidate;
   election: Election;
   electionVoter: ElectionVoter;
   entity: Entity;
   session: Session;
+  sqlean_define: SqleanDefine;
   user: User;
   verification: Verification;
 }
