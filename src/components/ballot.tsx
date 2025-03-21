@@ -22,6 +22,7 @@ export default function Ballot({ idx }: { idx: number }) {
           {
             date.toLocaleDateString("es-MX", {
               dateStyle: "long",
+              timeZone: "America/Mexico_City", // Compliant with IANA Time Zone Database
             }) /** Hardcoded Locale for now */
           }
         </p>
