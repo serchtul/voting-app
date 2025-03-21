@@ -29,7 +29,7 @@
     "kysely": "^0.27.6",
     "lucide-react": "^0.479.0",
     "nanoid": "^5.1.5",
-    "next": "^15.1.7",
+    "next": "^15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.1",
