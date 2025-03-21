@@ -8,7 +8,17 @@ import { db } from "./db";
 import { hashEmailQuery } from "./lib/hash-email";
 import { nanoid } from "nanoid";
 import { status } from "./constants";
+
 import "core-js/full/typed-array/to-hex";
+// Add corresponding type declaration for the polyfill
+declare global {
+  interface Uint8Array {
+    /**
+     * {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array/toHex MDN Reference}
+     */
+    toHex(): string;
+  }
+}
 
 const NANOID_SIZE = 10;
 
@@ -95,15 +105,14 @@ export async function processVotes(electionId: string, entityId: string, votes: 
       const ballotId = nanoid(NANOID_SIZE);
 
       /**
-       * Get 128 random bits (in hex format) as salt
+       * 128 cryptographically-strong random bits to be used as salt.
+       * This should probably use a different solution in the future.
        * {@link} https://security.stackexchange.com/questions/11221/how-big-should-salt-be
        */
       const bytes = new Uint8Array(16);
       crypto.getRandomValues(bytes);
-      // Since this is polyfilled from core-js, we don't have types for it
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const salt = (bytes as any).toHex();
 
+      const salt = bytes.toHex();
       ballotInserts.push({
         id: ballotId,
         electionId,
