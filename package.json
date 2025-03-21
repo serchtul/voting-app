@@ -27,7 +27,7 @@
     "core-js": "^3.41.0",
     "immer": "^10.1.1",
     "kysely": "^0.27.6",
-    "lucide-react": "^0.479.0",
+    "lucide-react": "~0.483.0",
     "nanoid": "^5.1.5",
     "next": "^15.2.3",
     "react": "^19.0.0",
@@ -53,5 +53,10 @@
     "prettier": "3.5.3",
     "tailwindcss": "^4.0.6",
     "typescript": "^5"
+  },
+  "overrides": {
+    "kysely-codegen": {
+      "shelljs": "^0.9"
+    }
   }
 }
