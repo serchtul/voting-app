@@ -1,23 +1,24 @@
-import { Vote } from "lucide-react";
+"use client";
+import { Vote, LoaderCircle } from "lucide-react";
 import { Button } from "./ui/button";
-import { useBallotStore } from "@/store/use-ballot-store";
-import { voteSchema } from "@/lib/validate/vote";
+import { useState } from "react";
 
-export default function VotingButton() {
-  const votes = useBallotStore((state) => state.ballots).map((ballot) => {
-    return Object.values(ballot);
-  });
-  const finishVoting = useBallotStore((state) => state.finishVoting);
-  // Is this performant enough? Change for a custom implementation if it causes any issue
-  const { success } = voteSchema.safeParse(votes);
+type VotingButtonProps = {
+  disabled: boolean;
+  processVotes: () => Promise<void>;
+};
 
+export default function VotingButton({ disabled, processVotes }: VotingButtonProps) {
+  const [waiting, setWaiting] = useState(false);
   const vote = async () => {
-    await finishVoting(votes);
+    setWaiting(true);
+    await processVotes().catch(() => {
+      setWaiting(false);
+    }); // TODO: Error handling
   };
-
   return (
-    <Button disabled={!success} size="lg" onClick={vote}>
-      <Vote />
+    <Button disabled={disabled || waiting} size="lg" onClick={vote}>
+      {waiting ? <LoaderCircle className="animate-spin" /> : <Vote />}
       Votar
     </Button>
   );

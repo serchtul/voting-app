@@ -1,8 +1,9 @@
+import { ABSTENTION, VOTE_AGAINST, VOTE_FOR } from "@/constants";
 import BallotEntry from "./ballot-entry";
-import { ABSTENTION, VOTE_AGAINST, VOTE_FOR, type Ballot, type Candidate } from "@/store/ballot";
+import type { Ballot, Candidate } from "@/types";
 
 type BallotCandidatesProps = {
-  handleVote: (candidateId: string) => (vote?: string) => void;
+  handleVote: (candidateId: string, vote?: string) => void;
   ballot: Ballot;
   candidates: Candidate[];
 };
@@ -20,9 +21,9 @@ export default function BallotCandidates({
 
   if (candidates.length === 1) {
     const candidate = candidates[0];
-    const vote = ballot[candidate.id];
+    const [vote] = ballot;
     const handler = (value: string) => () => {
-      handleVote(candidate.id)(vote.value !== value ? value : undefined);
+      handleVote(candidate.id, vote.value !== value ? value : undefined);
     };
 
     return (
@@ -54,16 +55,21 @@ export default function BallotCandidates({
 
   return (
     <div className={wrapperStyles}>
-      {candidates.map(({ name, id }) => (
-        <BallotEntry
-          key={id}
-          type="multi"
-          entry={name}
-          value={ballot[id].value}
-          handleVote={handleVote(id)}
-          options={ballot[id].value === ABSTENTION ? abstentionOptions : options}
-        />
-      ))}
+      {candidates.map(
+        (
+          { name, id },
+          idx, // This assumes candidates in ballots match the candidate list order
+        ) => (
+          <BallotEntry
+            key={id}
+            type="multi"
+            entry={name}
+            value={ballot[idx].value}
+            handleVote={handleVote.bind(null, id)}
+            options={ballot[idx].value === ABSTENTION ? abstentionOptions : options}
+          />
+        ),
+      )}
     </div>
   );
 }

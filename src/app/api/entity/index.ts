@@ -1,4 +1,4 @@
-import type { Entity } from "@/store/ballot";
+import type { Entity } from "@/types";
 
 export const eys: Entity[] = [
   { id: "YE6ajK2ZWK", name: "Aguascalientes", code: "AGS", votingStatus: "voting" },

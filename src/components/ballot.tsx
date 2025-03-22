@@ -1,12 +1,14 @@
 import Image from "next/image";
 import BallotCandidates from "./ballot-candidates";
-import { useBallotStore } from "@/store/use-ballot-store";
+import { Ballot as BallotType, Election } from "@/types";
 
-export default function Ballot({ idx }: { idx: number }) {
-  const election = useBallotStore((state) => state.election);
-  const ballot = useBallotStore((state) => state.ballots[idx]);
-  const updateBallot = useBallotStore((state) => state.updateBallot);
+type BallotProps = {
+  election: Election;
+  ballot: BallotType;
+  updateBallot: (candidateId: string, vote?: string) => void;
+};
 
+export default function Ballot({ election, ballot, updateBallot }: BallotProps) {
   const candidateLegend = `Candidatura${election.candidates.length === 1 ? "" : "s"}`;
   const date = new Date(election.date);
 
@@ -42,7 +44,7 @@ export default function Ballot({ idx }: { idx: number }) {
       <BallotCandidates
         ballot={ballot}
         candidates={election.candidates}
-        handleVote={updateBallot(idx)}
+        handleVote={updateBallot}
       />
     </div>
   );

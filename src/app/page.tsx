@@ -3,7 +3,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import VotingPage from "@/components/voting-page";
 import { db } from "@/db";
 import { plainify } from "@/lib/plain-ify";
-import type { Election, Entity } from "@/store/ballot";
+import type { Election, Entity } from "@/types";
 import { AlertCircle } from "lucide-react";
 import { headers } from "next/headers";
 

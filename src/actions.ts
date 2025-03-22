@@ -1,6 +1,8 @@
 "use server";
 
-import type { Vote } from "@/store/ballot";
+import "core-js/full/typed-array/to-hex"; // Polyfill for Uint8Array.toHex
+
+import type { Ballot } from "./types";
 import type { UpdateResult } from "kysely";
 import { auth } from "./auth";
 import { headers } from "next/headers";
@@ -8,8 +10,8 @@ import { db } from "./db";
 import { hashEmailQuery } from "./lib/hash-email";
 import { nanoid } from "nanoid";
 import { status } from "./constants";
+import { revalidatePath } from "next/cache";
 
-import "core-js/full/typed-array/to-hex";
 // Add corresponding type declaration for the polyfill
 declare global {
   interface Uint8Array {
@@ -49,10 +51,12 @@ export async function startVoting(electionId: string, entityId: string) {
   if (result.numUpdatedRows === BigInt(0)) {
     throw new Error("Election has already been started elsewhere");
   }
+
+  revalidatePath("/");
 }
 
 // TODO: Extract the main parts of this process into separate functions
-export async function processVotes(electionId: string, entityId: string, votes: Vote[][]) {
+export async function processVotes(electionId: string, entityId: string, ballots: Ballot[]) {
   const email = await getVoterEmail();
 
   // Validate all candidates have a vote
@@ -61,7 +65,7 @@ export async function processVotes(electionId: string, entityId: string, votes: 
     .select("id")
     .where("electionId", "=", electionId)
     .execute();
-  for (const ballot of votes) {
+  for (const ballot of ballots) {
     if (
       ballot.length !== validCandidateIds.length ||
       !validCandidateIds.every(({ id }) => ballot.some(({ candidateId }) => id === candidateId))
@@ -94,14 +98,14 @@ export async function processVotes(electionId: string, entityId: string, votes: 
     const eyTotalVotes = result.votes;
     const ballotCount = await getSubmittedBallotCount(trx, electionId, email);
 
-    if (ballotCount + votes.length > eyTotalVotes) {
+    if (ballotCount + ballots.length > eyTotalVotes) {
       throw new Error("Entity can't submit more votes than they are allowed");
     }
 
     const ballotInserts = [];
     const ballotVoteInserts = [];
 
-    for (const ballot of votes) {
+    for (const ballot of ballots) {
       const ballotId = nanoid(NANOID_SIZE);
 
       /**
@@ -132,6 +136,8 @@ export async function processVotes(electionId: string, entityId: string, votes: 
     await trx.insertInto("ballot").values(ballotInserts).executeTakeFirstOrThrow();
     await trx.insertInto("ballotVote").values(ballotVoteInserts).executeTakeFirstOrThrow();
   });
+
+  revalidatePath("/");
 }
 
 async function getVoterEmail() {

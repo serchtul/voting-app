@@ -1,10 +1,10 @@
-import type { Entity, Status } from "@/store/ballot";
+import type { Entity, VotingStatus } from "@/types";
 import { Card, CardContent } from "./ui/card";
 import { CheckCircle, WifiOff } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
-const statusMessages: Record<Status, string> = {
+const statusMessages: Record<VotingStatus, string> = {
   offline: "Desconectado",
   voting: "Votando",
   done: "Votó",

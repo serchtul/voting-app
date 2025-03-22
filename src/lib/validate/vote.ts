@@ -1,4 +1,4 @@
-import { ABSTENTION } from "@/store/ballot";
+import { ABSTENTION } from "@/constants";
 import { z } from "zod";
 
 export const voteSchema = z
