@@ -1,9 +1,11 @@
 import { auth } from "@/auth";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import VotingPage from "@/components/voting-page";
+import { status } from "@/constants";
 import { db } from "@/db";
+import { hashEmailQuery } from "@/lib/hash-email";
 import { plainify } from "@/lib/plain-ify";
-import type { Election, Entity } from "@/types";
+import type { Ballot, Election, Entity, Vote } from "@/types";
 import { AlertCircle } from "lucide-react";
 import { headers } from "next/headers";
 
@@ -24,7 +26,6 @@ export default async function Home() {
       .execute(),
   );
 
-  // TODO: Add error handling when someone who is not assigned to an election logs in.
   const entity = plainify(
     await db
       .selectFrom("entity")
@@ -49,15 +50,32 @@ export default async function Home() {
     );
   }
 
+  let ballots: Ballot[] | undefined;
+  if (entity.votingStatus === status.done) {
+    const rawVotes = await db
+      .selectFrom("ballot")
+      .innerJoin("ballotVote", "ballotId", "ballot.id")
+      .select(["ballotId", "candidateId", "vote as value"])
+      .where("electionId", "=", dbElection.id)
+      .whereRef("votingHash", "=", hashEmailQuery(email))
+      .execute();
+
+    // Technically, this should always be true
+    if (rawVotes.length > 0) {
+      const candidateIdx = new Map(candidates.map(({ id }, idx) => [id, idx]));
+      const rawBallots = Object.groupBy(rawVotes, (vote) => vote.ballotId);
+      ballots = Object.values(rawBallots).map((ballot) =>
+        // Ensure the order of the votes in the ballots matches that of the candidates
+        ballot!
+          .map<Vote>((v) => ({ candidateId: v.candidateId, value: v.value }))
+          .sort((a, b) => candidateIdx.get(a.candidateId)! - candidateIdx.get!(b.candidateId)!),
+      );
+    }
+  }
+
   const election: Election = {
     ...dbElection,
     candidates,
   };
-
-  // TODO: If election is done, pre-populate ballots with values from the DB (inject into store, with the valid format)
-  return (
-    <>
-      <VotingPage election={election} entity={entity as Entity} />
-    </>
-  );
+  return <VotingPage election={election} entity={entity as Entity} ballots={ballots} />;
 }

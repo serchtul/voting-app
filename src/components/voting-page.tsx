@@ -12,17 +12,23 @@ import { voteSchema } from "@/lib/validate/vote";
 import VotingButton from "./voting-button";
 
 type VotingFormProps = {
+  ballots?: BallotType[];
   election: Election;
   entity: Entity;
 };
 
-export default function VotingPage({ entity, election }: VotingFormProps) {
+export default function VotingPage({
+  entity,
+  election,
+  ballots: prefilledBallots,
+}: VotingFormProps) {
   const votes = entity.votes ?? 1;
   const hasVoted = entity.votingStatus === status.done;
   const [ballots, setBallots] = useState<BallotType[]>(
-    Array.from({ length: votes }, () =>
-      election.candidates.map(({ id }) => ({ candidateId: id }) as Vote),
-    ),
+    prefilledBallots ??
+      Array.from({ length: votes }, () =>
+        election.candidates.map(({ id }) => ({ candidateId: id }) as Vote),
+      ),
   );
   const { success: votesAreValid } = voteSchema.safeParse(ballots);
 
