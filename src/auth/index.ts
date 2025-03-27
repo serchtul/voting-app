@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
-import { dialect } from "./db/dialect";
+import { dialect } from "../db/dialect";
 import { admin } from "better-auth/plugins";
+import { accessControl, adminRoles, roles } from "./policies";
 
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
@@ -15,7 +16,7 @@ export const auth = betterAuth({
     dialect,
     type: "sqlite",
   },
-  plugins: [admin()],
+  plugins: [admin({ ac: accessControl, adminRoles, roles })],
   socialProviders: {
     google: {
       clientId: googleClientId,

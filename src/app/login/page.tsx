@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@/auth/client";
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
