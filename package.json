@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --out-file ./src/db/db.d.ts"
+    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --exclude-pattern=\"(account|session|verification|sqlean*)\" --out-file ./src/db/db.d.ts"
   },
   "dependencies": {
     "@libsql/kysely-libsql": "^0.4.1",

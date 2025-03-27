@@ -10,22 +10,6 @@ export type Generated<T> =
     ? ColumnType<S, I | undefined, U>
     : ColumnType<T, T | undefined, T>;
 
-export interface Account {
-  accessToken: string | null;
-  accessTokenExpiresAt: string | null;
-  accountId: string;
-  createdAt: string;
-  id: string;
-  idToken: string | null;
-  password: string | null;
-  providerId: string;
-  refreshToken: string | null;
-  refreshTokenExpiresAt: string | null;
-  scope: string | null;
-  updatedAt: string;
-  userId: string;
-}
-
 export interface Ballot {
   electionId: string;
   id: string;
@@ -65,23 +49,6 @@ export interface Entity {
   votingEmail: string;
 }
 
-export interface Session {
-  createdAt: string;
-  expiresAt: string;
-  id: string;
-  ipAddress: string | null;
-  token: string;
-  updatedAt: string;
-  userAgent: string | null;
-  userId: string;
-}
-
-export interface SqleanDefine {
-  body: string | null;
-  name: string | null;
-  type: string | null;
-}
-
 export interface User {
   createdAt: string;
   email: string;
@@ -92,25 +59,12 @@ export interface User {
   updatedAt: string;
 }
 
-export interface Verification {
-  createdAt: string | null;
-  expiresAt: string;
-  id: string;
-  identifier: string;
-  updatedAt: string | null;
-  value: string;
-}
-
 export interface DB {
-  account: Account;
   ballot: Ballot;
   ballotVote: BallotVote;
   candidate: Candidate;
   election: Election;
   electionVoter: ElectionVoter;
   entity: Entity;
-  session: Session;
-  sqlean_define: SqleanDefine;
   user: User;
-  verification: Verification;
 }
