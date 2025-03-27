@@ -11,7 +11,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --exclude-pattern=\"(account|session|verification|sqlean*)\" --out-file ./src/db/db.d.ts"
+    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --exclude-pattern=\"(account|session|verification|sqlean*)\" --out-file ./src/db/db.d.ts",
+    "user:create": "tsx --env-file .env scripts/create-users.ts"
   },
   "dependencies": {
     "@libsql/kysely-libsql": "^0.4.1",
@@ -51,6 +52,7 @@
     "postcss": "^8.5.2",
     "prettier": "3.5.3",
     "tailwindcss": "^4.0.6",
+    "tsx": "^4.19.3",
     "typescript": "^5"
   },
   "overrides": {

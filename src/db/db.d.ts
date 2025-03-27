@@ -50,12 +50,16 @@ export interface Entity {
 }
 
 export interface User {
+  banExpires: string | null;
+  banned: number | null;
+  banReason: string | null;
   createdAt: string;
   email: string;
   emailVerified: number;
   id: string;
   image: string | null;
   name: string;
+  role: string | null;
   updatedAt: string;
 }
 
