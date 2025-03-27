@@ -10,7 +10,7 @@ const statusMessages: Record<VotingStatus, string> = {
   done: "Votó",
 };
 
-export default function EntityCard({ name, votingStatus: status, code }: Entity) {
+export default function EntityCard({ name, votingStatus: status, code, votes }: Entity) {
   return (
     <TooltipProvider>
       <Tooltip>
@@ -28,6 +28,7 @@ export default function EntityCard({ name, votingStatus: status, code }: Entity)
         <TooltipContent>
           <p>
             {name} - {statusMessages[status]}
+            {votes > 1 && ` (x${votes})`}
           </p>
         </TooltipContent>
       </Tooltip>

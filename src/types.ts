@@ -5,7 +5,7 @@ export type Entity = {
   name: string;
   code: string;
   votingStatus: VotingStatus;
-  votes?: number;
+  votes: number;
 };
 
 export type Candidate = {

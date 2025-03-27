@@ -22,7 +22,7 @@ export default function VotingPage({
   election,
   ballots: prefilledBallots,
 }: VotingFormProps) {
-  const votes = entity.votes ?? 1;
+  const votes = entity.votes;
   const hasVoted = entity.votingStatus === status.done;
   const [ballots, setBallots] = useState<BallotType[]>(
     prefilledBallots ??
