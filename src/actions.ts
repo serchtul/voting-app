@@ -4,13 +4,12 @@ import "core-js/full/typed-array/to-hex"; // Polyfill for Uint8Array.toHex
 
 import type { Ballot } from "./types";
 import type { UpdateResult } from "kysely";
-import { auth } from "./auth";
-import { headers } from "next/headers";
 import { db } from "./db";
 import { hashEmailQuery } from "./lib/hash-email";
 import { nanoid } from "nanoid";
 import { status } from "./constants";
 import { revalidatePath } from "next/cache";
+import { getUserEmail } from "./auth/helpers";
 
 // Add corresponding type declaration for the polyfill
 declare global {
@@ -27,7 +26,7 @@ const NANOID_SIZE = 10;
 // BIG TODO: Improve general error handling of this file
 
 export async function startVoting(electionId: string, entityId: string) {
-  const email = await getVoterEmail();
+  const email = await getUserEmail();
 
   // TODO: Add logging w/pino about who's starting the voting process
   console.log("entityId", entityId, "starting voting for electionId", electionId);
@@ -57,7 +56,7 @@ export async function startVoting(electionId: string, entityId: string) {
 
 // TODO: Extract the main parts of this process into separate functions
 export async function processVotes(electionId: string, entityId: string, ballots: Ballot[]) {
-  const email = await getVoterEmail();
+  const email = await getUserEmail();
 
   // Validate all candidates have a vote
   const validCandidateIds = await db
@@ -138,14 +137,6 @@ export async function processVotes(electionId: string, entityId: string, ballots
   });
 
   revalidatePath("/");
-}
-
-async function getVoterEmail() {
-  const session = await auth.api.getSession({
-    headers: await headers(), // you need to pass the headers object.
-  });
-  // This assumes middleware authentication has passed
-  return session!.user.email;
 }
 
 // Calculate all possible hashes of casted ballots to ensure an entity is not submitting more votes than expected

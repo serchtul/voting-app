@@ -1,4 +1,4 @@
-import { auth } from "@/auth";
+import { getUserEmail } from "@/auth/helpers";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import VotingPage from "@/components/voting-page";
 import { status } from "@/constants";
@@ -7,14 +7,9 @@ import { hashEmailQuery } from "@/lib/hash-email";
 import { plainify } from "@/lib/plain-ify";
 import type { Ballot, Election, Entity, Vote } from "@/types";
 import { AlertCircle } from "lucide-react";
-import { headers } from "next/headers";
 
 export default async function Home() {
-  const {
-    user: { email },
-  } = (await auth.api.getSession({
-    headers: await headers(),
-  }))!;
+  const email = await getUserEmail(); // Handle errors here once the middleware is removed
 
   // TODO: There's currently only one election in the DB, so this is okay for now
   const dbElection = await db.selectFrom("election").selectAll().executeTakeFirstOrThrow();

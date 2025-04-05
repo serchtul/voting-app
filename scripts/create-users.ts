@@ -1,5 +1,6 @@
 // Usage: npm run user:create
 
+import { SESSION_COOKIE_NAME } from "@/auth";
 import { db } from "@/db";
 import { adminClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
@@ -12,12 +13,11 @@ if (!COOKIE_TOKEN) {
   throw new Error("Cookie token is required. Please set its value in the script.");
 }
 
-const COOKIE_NAME = "better-auth.session_token"; // This is the default cookie name
 const client = createAuthClient({
   baseURL: BASE_URL,
   fetchOptions: {
     headers: {
-      Cookie: `${COOKIE_NAME}=${COOKIE_TOKEN}`,
+      Cookie: `${SESSION_COOKIE_NAME}=${COOKIE_TOKEN}`,
     },
   },
   plugins: [adminClient()],

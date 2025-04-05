@@ -3,6 +3,8 @@ import { dialect } from "../db/dialect";
 import { admin } from "better-auth/plugins";
 import { accessControl, adminRoles, roles } from "./policies";
 
+export const SESSION_COOKIE_NAME = "better-auth.session_token"; // Store better-auth's default cookie name as a constant
+
 const googleClientId = process.env.GOOGLE_CLIENT_ID;
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET;
 if (!googleClientId || !googleClientSecret) {
