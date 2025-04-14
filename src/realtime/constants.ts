@@ -1,2 +1,7 @@
-export const PRESENCE_PREFIX = "presence-";
-export const ELECTION_PREFIX = "election-";
+type ElectionEvent = "entityVoting" | "entityVoted";
+export const adminEvents: Record<ElectionEvent, ElectionEvent> = {
+  entityVoting: "entityVoting",
+  entityVoted: "entityVoted",
+};
+
+export const getAdminChannelName = (electionId: string) => `private-election-${electionId}-admin`;

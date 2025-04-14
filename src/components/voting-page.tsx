@@ -10,9 +10,6 @@ import { type Election, type Entity, type Ballot as BallotType, type Vote } from
 import { assertEntityIsVoting } from "@/lib/entity-is-voting";
 import { voteSchema } from "@/lib/validate/vote";
 import VotingButton from "./voting-button";
-import { makePusherClient } from "@/realtime/client";
-import { ELECTION_PREFIX, PRESENCE_PREFIX } from "@/realtime/constants";
-import type Pusher from "pusher-js";
 
 type VotingFormProps = {
   ballots?: BallotType[];
@@ -40,18 +37,6 @@ export default function VotingPage({
       // Only register the voting has started when we are on the FE
       startVoting(election.id, entity.id); // TODO: Error handling
     }
-
-    let pusher: Pusher;
-    if (entity.votingStatus !== status.done) {
-      pusher = makePusherClient();
-      pusher.subscribe(`${PRESENCE_PREFIX}${ELECTION_PREFIX}${election.id}`); // TODO: Error handling
-    }
-
-    return () => {
-      if (pusher) {
-        pusher.disconnect();
-      }
-    };
   }, [election.id, entity]);
 
   const updateBallot = (ballotIdx: number) => (candidateId: string, value?: string) => {

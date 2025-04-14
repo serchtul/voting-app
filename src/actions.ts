@@ -10,6 +10,8 @@ import { nanoid } from "nanoid";
 import { status } from "./constants";
 import { revalidatePath } from "next/cache";
 import { getUserEmail } from "./auth/helpers";
+import { pusher } from "./realtime/server";
+import { adminEvents, getAdminChannelName } from "./realtime/constants";
 
 // Add corresponding type declaration for the polyfill
 declare global {
@@ -32,25 +34,29 @@ export async function startVoting(electionId: string, entityId: string) {
   console.log("entityId", entityId, "starting voting for electionId", electionId);
 
   let result: UpdateResult | undefined;
+
   try {
-    result = await db
-      .updateTable("electionVoter")
-      .set("votingStatus", status.voting)
-      .from("entity")
-      .whereRef("entity.id", "=", "entityId")
-      .where("votingEmail", "=", email) // Ensures election is being modified by the authorized voter
-      .where("electionId", "=", electionId)
-      .where("entityId", "=", entityId)
-      .where("votingStatus", "=", status.offline)
-      .executeTakeFirst();
+    db.transaction().execute(async (trx) => {
+      result = await trx
+        .updateTable("electionVoter")
+        .set("votingStatus", status.voting)
+        .from("entity")
+        .whereRef("entity.id", "=", "entityId")
+        .where("votingEmail", "=", email) // Ensures election is being modified by the authorized voter
+        .where("electionId", "=", electionId)
+        .where("entityId", "=", entityId)
+        .where("votingStatus", "=", status.offline)
+        .executeTakeFirst();
+
+      await pusher.trigger(getAdminChannelName(electionId), adminEvents.entityVoting, entityId);
+    });
   } catch (error) {
     throw new Error("There was a server error. Please try again", { cause: error });
   }
 
-  if (result.numUpdatedRows === BigInt(0)) {
+  if (result!.numUpdatedRows === BigInt(0)) {
     throw new Error("Election has already been started elsewhere");
   }
-
   revalidatePath("/");
 }
 
@@ -134,6 +140,8 @@ export async function processVotes(electionId: string, entityId: string, ballots
 
     await trx.insertInto("ballot").values(ballotInserts).executeTakeFirstOrThrow();
     await trx.insertInto("ballotVote").values(ballotVoteInserts).executeTakeFirstOrThrow();
+
+    await pusher.trigger(getAdminChannelName(electionId), adminEvents.entityVoted, entityId);
   });
 
   revalidatePath("/");
