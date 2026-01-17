@@ -51,7 +51,7 @@
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "kysely-codegen": "^0.18.3",
-    "kysely-ctl": "^0.12.1",
+    "kysely-ctl": "^0.20.0",
     "postcss": "^8.5.2",
     "prettier": "3.5.3",
     "tailwindcss": "^4.0.6",
