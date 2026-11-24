@@ -11,7 +11,7 @@ import { plainify } from "@/lib/plain-ify";
 export default async function ElectionTracker() {
   const { error, success } = await auth.api.userHasPermission({
     headers: await headers(),
-    body: { permission: { election: ["track"] } },
+    body: { permissions: { election: ["track"] } },
   });
 
   if (error) {
