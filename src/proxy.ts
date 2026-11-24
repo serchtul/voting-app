@@ -16,7 +16,7 @@ export const config = {
   matcher: "/((?!login|api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
 };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // TODO: Only allow one session at a time (maybe check during login callback?)
   // TODO: Ideally check roles too
   try {

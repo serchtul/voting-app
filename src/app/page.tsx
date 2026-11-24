@@ -9,7 +9,7 @@ import type { Ballot, Election, Entity, Vote } from "@/types";
 import { AlertCircle } from "lucide-react";
 
 export default async function Home() {
-  const email = await getUserEmail(); // Handle errors here once the middleware is removed
+  const email = await getUserEmail(); // Handle errors here once the proxy is removed
 
   // TODO: There's currently only one election in the DB, so this is okay for now
   const dbElection = await db.selectFrom("election").selectAll().executeTakeFirstOrThrow();
