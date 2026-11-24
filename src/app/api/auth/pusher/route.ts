@@ -19,7 +19,6 @@ export async function POST(request: Request) {
       body: { permissions: { election: ["track"] } },
     }));
   } catch (error) {
-    // Server-side calls throw (instead of returning) an APIError when there's no session
     if (isAPIError(error) && error.statusCode === 401) {
       return new Response("Unauthorized", { status: 401 });
     }
