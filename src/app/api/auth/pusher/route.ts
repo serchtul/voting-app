@@ -13,7 +13,7 @@ const pusherRequestSchema = z.object({
 export async function POST(request: Request) {
   const { error, success } = await auth.api.userHasPermission({
     headers: await headers(),
-    body: { permission: { election: ["track"] } },
+    body: { permissions: { election: ["track"] } },
   });
 
   if (error) {
