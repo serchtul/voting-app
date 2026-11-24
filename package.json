@@ -10,7 +10,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --exclude-pattern=\"(account|session|verification|sqlean*)\" --out-file ./src/db/db.d.ts",
     "user:create": "tsx --env-file .env scripts/create-users.ts"
   },

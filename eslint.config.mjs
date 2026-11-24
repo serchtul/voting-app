@@ -5,6 +5,10 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  {
+    // `next lint` used to ignore these by default
+    ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"],
+  },
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
