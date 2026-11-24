@@ -3,7 +3,7 @@ import { isCastBy } from "@/lib/hash-email";
 
 const [email, electionId] = process.argv.slice(2);
 if (!email) {
-  throw new Error("Usage: npm run votes:count -- <email> [electionId]");
+  throw new Error("Usage: pnpm votes:count <email> [electionId]");
 }
 
 (async () => {
