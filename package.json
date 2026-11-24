@@ -11,8 +11,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --exclude-pattern=\"(account|session|verification|sqlean*)\" --out-file ./src/db/db.d.ts",
-    "user:create": "tsx --env-file .env scripts/create-users.ts"
+    "db:codegen": "kysely-codegen --dialect libsql --url \"env(TURSO_DATABASE_URL)\" --exclude-pattern=\"(account|session|verification)\" --out-file ./src/db/db.d.ts",
+    "user:create": "tsx --env-file .env scripts/create-users.ts",
+    "db:seed": "tsx --env-file .env scripts/seed-dev.ts",
+    "votes:reset": "tsx --env-file .env scripts/reset-votes.ts",
+    "votes:count": "tsx --env-file .env scripts/count-ballots.ts"
   },
   "dependencies": {
     "@libsql/kysely-libsql": "^0.4.1",

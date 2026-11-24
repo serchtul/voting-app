@@ -5,7 +5,7 @@ import "core-js/full/typed-array/to-hex"; // Polyfill for Uint8Array.toHex
 import type { Ballot } from "./types";
 import type { UpdateResult } from "kysely";
 import { db } from "./db";
-import { hashEmailQuery } from "./lib/hash-email";
+import { hashEmail, isCastBy } from "./lib/hash-email";
 import { nanoid } from "nanoid";
 import { status } from "./constants";
 import { revalidatePath } from "next/cache";
@@ -126,7 +126,7 @@ export async function processVotes(electionId: string, entityId: string, ballots
         id: ballotId,
         electionId,
         salt,
-        votingHash: hashEmailQuery<string>(email, salt),
+        votingHash: hashEmail(email, salt),
       });
 
       ballotVoteInserts.push(
@@ -148,12 +148,11 @@ export async function processVotes(electionId: string, entityId: string, ballots
 }
 
 // Calculate all possible hashes of casted ballots to ensure an entity is not submitting more votes than expected
-function getSubmittedBallotCount(trx: typeof db, electionId: string, email: string) {
-  return trx
+async function getSubmittedBallotCount(trx: typeof db, electionId: string, email: string) {
+  const ballots = await trx
     .selectFrom("ballot")
-    .select(trx.fn.countAll().as("numBallots"))
+    .select(["salt", "votingHash"])
     .where("electionId", "=", electionId)
-    .whereRef("votingHash", "=", hashEmailQuery(email))
-    .executeTakeFirstOrThrow()
-    .then((result) => result.numBallots as number);
+    .execute();
+  return ballots.filter((ballot) => isCastBy(email, ballot)).length;
 }
