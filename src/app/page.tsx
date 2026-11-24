@@ -3,7 +3,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import VotingPage from "@/components/voting-page";
 import { status } from "@/constants";
 import { db } from "@/db";
-import { hashEmailQuery } from "@/lib/hash-email";
+import { isCastBy } from "@/lib/hash-email";
 import { plainify } from "@/lib/plain-ify";
 import type { Ballot, Election, Entity, Vote } from "@/types";
 import { AlertCircle } from "lucide-react";
@@ -47,13 +47,14 @@ export default async function Home() {
 
   let ballots: Ballot[] | undefined;
   if (entity.votingStatus === status.done) {
-    const rawVotes = await db
-      .selectFrom("ballot")
-      .innerJoin("ballotVote", "ballotId", "ballot.id")
-      .select(["ballotId", "candidateId", "vote as value"])
-      .where("electionId", "=", dbElection.id)
-      .whereRef("votingHash", "=", hashEmailQuery(email))
-      .execute();
+    const rawVotes = (
+      await db
+        .selectFrom("ballot")
+        .innerJoin("ballotVote", "ballotId", "ballot.id")
+        .select(["ballotId", "candidateId", "vote as value", "salt", "votingHash"])
+        .where("electionId", "=", dbElection.id)
+        .execute()
+    ).filter((vote) => isCastBy(email, vote));
 
     // Technically, this should always be true
     if (rawVotes.length > 0) {
