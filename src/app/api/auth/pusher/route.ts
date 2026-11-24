@@ -1,6 +1,7 @@
 import { pusher } from "@/realtime/server";
 import { z } from "zod";
 import { auth } from "@/auth";
+import { isAPIError } from "better-auth/api";
 import { headers } from "next/headers";
 import { getUser } from "@/auth/helpers";
 
@@ -11,17 +12,21 @@ const pusherRequestSchema = z.object({
 
 // TODO: Add logic for both presence (voters) and admin channels to handle disconnections
 export async function POST(request: Request) {
-  const { error, success } = await auth.api.userHasPermission({
-    headers: await headers(),
-    body: { permissions: { election: ["track"] } },
-  });
-
-  if (error) {
+  let success: boolean;
+  try {
+    ({ success } = await auth.api.userHasPermission({
+      headers: await headers(),
+      body: { permissions: { election: ["track"] } },
+    }));
+  } catch (error) {
+    if (isAPIError(error) && error.statusCode === 401) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     console.error(error);
     throw error;
   }
   if (!success) {
-    throw new Response("Unauthorized", { status: 403 });
+    return new Response("Forbidden", { status: 403 });
   }
 
   let pusherInfo: z.infer<typeof pusherRequestSchema>;

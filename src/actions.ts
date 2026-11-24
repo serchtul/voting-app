@@ -36,7 +36,7 @@ export async function startVoting(electionId: string, entityId: string) {
   let result: UpdateResult | undefined;
 
   try {
-    db.transaction().execute(async (trx) => {
+    await db.transaction().execute(async (trx) => {
       result = await trx
         .updateTable("electionVoter")
         .set("votingStatus", status.voting)
