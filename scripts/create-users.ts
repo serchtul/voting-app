@@ -1,4 +1,4 @@
-// Usage: npm run user:create
+// Usage: pnpm user:create
 
 import { SESSION_COOKIE_NAME } from "@/auth";
 import { db } from "@/db";
