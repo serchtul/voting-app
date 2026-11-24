@@ -18,6 +18,7 @@ const client = createAuthClient({
   fetchOptions: {
     headers: {
       Cookie: `${SESSION_COOKIE_NAME}=${COOKIE_TOKEN}`,
+      Origin: BASE_URL, // better-auth rejects cookie-authenticated requests without a trusted Origin
     },
   },
   plugins: [adminClient()],
@@ -37,7 +38,8 @@ const usersToCreate: ToCreate[] = [
     const created = await client.admin.createUser({
       name,
       email,
-      role: "user",
+      // No role: the admin plugin assigns its default role ("user"). Setting it explicitly fails
+      // because "user" isn't one of the roles defined in src/auth/policies.ts
       data: { emailVerified: true },
       password: "", // Password is required by the SDK. We'll delete them from the DB right after, to only allow logins via Google
     });
@@ -46,6 +48,11 @@ const usersToCreate: ToCreate[] = [
     if (created.data) {
       addedIds.push(created.data.user.id);
     }
+  }
+
+  if (addedIds.length === 0) {
+    console.log("No users were created");
+    return;
   }
 
   // Delete password-based logins
