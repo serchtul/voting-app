@@ -25,7 +25,7 @@ with Google sign-in, [Kysely](https://kysely.dev) over [libSQL / Turso](https://
 
 ## Requirements
 
-- Node.js 22.12 or later (see `.nvmrc`).
+- Node.js 26 or later (see `.nvmrc`).
 - pnpm 12. `package.json` pins the exact version in `packageManager`, which pnpm and Corepack
   pick up.
 - A libSQL server. Locally, `docker compose` (or `podman compose`) runs one from
